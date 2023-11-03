@@ -1,0 +1,3 @@
+[submodule "app/src/main/java/d2d/testing/streaming"]
+	path = app/src/main/java/d2d/testing/streaming
+	url = https://github.com/verdx/libstreaming2.0.git
