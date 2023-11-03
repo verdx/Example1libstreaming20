@@ -52,7 +52,7 @@ public class MainActivity extends Activity implements OnClickListener, Session.C
                 .setAudioEncoder(SessionBuilder.AUDIO_NONE)
                 .setAudioQuality(new AudioQuality(16000, 32000))
                 .setVideoEncoder(SessionBuilder.VIDEO_H264)
-                .setVideoQuality(new VideoQuality(320,240,20,500000))
+                .setVideoQuality(new VideoQuality(320, 240, 20, 500000))
                 .build();
 
         mButton1.setOnClickListener(this);
@@ -97,7 +97,7 @@ public class MainActivity extends Activity implements OnClickListener, Session.C
 
     @Override
     public void onBitrateUpdate(long bitrate) {
-        Log.d(TAG,"Bitrate: "+bitrate);
+        Log.d(TAG, "Bitrate: " + bitrate);
     }
 
     @Override
@@ -111,12 +111,12 @@ public class MainActivity extends Activity implements OnClickListener, Session.C
     @Override
 
     public void onPreviewStarted() {
-        Log.d(TAG,"Preview started.");
+        Log.d(TAG, "Preview started.");
     }
 
     @Override
     public void onSessionConfigured() {
-        Log.d(TAG,"Preview configured.");
+        Log.d(TAG, "Preview configured.");
         // Once the stream is configured, you can get a SDP formated session description
         // that you can send to the receiver of the stream.
         // For example, to receive the stream in VLC, store the session description in a .sdp file
@@ -127,24 +127,27 @@ public class MainActivity extends Activity implements OnClickListener, Session.C
 
     @Override
     public void onSessionStarted() {
-        Log.d(TAG,"Session started.");
+        Log.d(TAG, "Session started.");
         mButton1.setEnabled(true);
         mButton1.setText(R.string.stop);
     }
 
     @Override
     public void onSessionStopped() {
-        Log.d(TAG,"Session stopped.");
+        Log.d(TAG, "Session stopped.");
         mButton1.setEnabled(true);
         mButton1.setText(R.string.start);
     }
 
-    /** Displays a popup to report the eror to the user */
+    /**
+     * Displays a popup to report the eror to the user
+     */
     private void logError(final String msg) {
         final String error = (msg == null) ? "Error unknown" : msg;
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         builder.setMessage(error).setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {}
+            public void onClick(DialogInterface dialog, int id) {
+            }
         });
         AlertDialog dialog = builder.create();
         dialog.show();
@@ -165,3 +168,4 @@ public class MainActivity extends Activity implements OnClickListener, Session.C
     public void surfaceDestroyed(SurfaceHolder holder) {
         mSession.stop();
     }
+}
