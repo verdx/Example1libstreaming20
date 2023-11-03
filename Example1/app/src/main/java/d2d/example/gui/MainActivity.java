@@ -11,7 +11,6 @@ import android.view.WindowManager;
 
 import com.example.gui.R;
 
-import d2d.testing.streaming.gl.SurfaceView;
 import d2d.testing.streaming.rtsp.RtspServer;
 import d2d.testing.streaming.sessions.SessionBuilder;
 
@@ -22,16 +21,12 @@ public class MainActivity extends Activity {
 
 	private final static String TAG = "MainActivity";
 
-	private SurfaceView mSurfaceView;
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		setContentView(R.layout.activity_main);
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-
-		mSurfaceView = (SurfaceView) findViewById(R.id.surface);
 		
 		// Sets the port of the RTSP server to 1234
 		Editor editor = getDefaultSharedPreferences(this).edit();
@@ -40,7 +35,6 @@ public class MainActivity extends Activity {
 
 		// Configures the SessionBuilder
 		SessionBuilder.getInstance()
-		.setSurfaceView(mSurfaceView)
 		.setPreviewOrientation(90)
 		.setContext(getApplicationContext())
 		.setAudioEncoder(SessionBuilder.AUDIO_NONE)

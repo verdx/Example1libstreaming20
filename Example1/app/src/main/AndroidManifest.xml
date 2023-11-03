@@ -31,7 +31,7 @@
             </intent-filter>
         </activity>
 
-        <service android:name="d2d.example.testing.streaming.rtsp.RtspServer" />
+        <service android:name="d2d.testing.streaming.rtsp.RtspServer" />
     </application>
 
 </manifest>
