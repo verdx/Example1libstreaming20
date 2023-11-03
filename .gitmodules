@@ -1,7 +1,8 @@
 [submodule "Example1/app/src/main/java/d2d/testing/streaming"]
 	path = Example1/app/src/main/java/d2d/testing/streaming
 	url = https://github.com/verdx/libstreaming2.0.git
-    branch = example1
+	branch = example1
 [submodule "Example2/app/src/main/java/d2d/testing/streaming"]
 	path = Example2/app/src/main/java/d2d/testing/streaming
 	url = https://github.com/verdx/libstreaming2.0.git
+	branch = example1
