@@ -14,7 +14,6 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import d2d.testing.streaming.audio.AudioQuality;
-import d2d.testing.streaming.gl.SurfaceView;
 import d2d.testing.streaming.sessions.Session;
 import d2d.testing.streaming.sessions.SessionBuilder;
 import d2d.testing.streaming.video.VideoQuality;
@@ -28,7 +27,6 @@ public class MainActivity extends Activity implements OnClickListener, Session.C
     private final static String TAG = "MainActivity";
 
     private Button mButton1, mButton2;
-    private SurfaceView mSurfaceView;
     private EditText mEditText;
     private Session mSession;
 
@@ -41,12 +39,10 @@ public class MainActivity extends Activity implements OnClickListener, Session.C
 
         mButton1 = (Button) findViewById(R.id.button1);
         mButton2 = (Button) findViewById(R.id.button2);
-        mSurfaceView = (SurfaceView) findViewById(R.id.surface);
         mEditText = (EditText) findViewById(R.id.editText1);
 
         mSession = SessionBuilder.getInstance()
                 .setCallback(this)
-                .setSurfaceView(mSurfaceView)
                 .setPreviewOrientation(90)
                 .setContext(getApplicationContext())
                 .setAudioEncoder(SessionBuilder.AUDIO_NONE)
@@ -58,7 +54,6 @@ public class MainActivity extends Activity implements OnClickListener, Session.C
         mButton1.setOnClickListener(this);
         mButton2.setOnClickListener(this);
 
-        mSurfaceView.getHolder().addCallback(this);
 
     }
 
@@ -117,10 +112,10 @@ public class MainActivity extends Activity implements OnClickListener, Session.C
     @Override
     public void onSessionConfigured() {
         Log.d(TAG, "Preview configured.");
-        // Once the stream is configured, you can get a SDP formated session description
+        // Once the stream is configured, you can get a SDP formatted session description
         // that you can send to the receiver of the stream.
         // For example, to receive the stream in VLC, store the session description in a .sdp file
-        // and open it with VLC while streming.
+        // and open it with VLC while streaming.
         Log.d(TAG, mSession.getSessionDescription());
         mSession.start();
     }
@@ -140,7 +135,7 @@ public class MainActivity extends Activity implements OnClickListener, Session.C
     }
 
     /**
-     * Displays a popup to report the eror to the user
+     * Displays a popup to report the error to the user
      */
     private void logError(final String msg) {
         final String error = (msg == null) ? "Error unknown" : msg;
