@@ -4,7 +4,7 @@ plugins {
 
 android {
     namespace 'd2d.example.example2'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "d2d.example.example2"
