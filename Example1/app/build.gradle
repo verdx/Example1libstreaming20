@@ -7,7 +7,7 @@ android {
     compileSdk 34
 
     defaultConfig {
-        applicationId "com.example.gui"
+        applicationId 'd2d.example.gui'
         minSdk 29
         targetSdk 33
         versionCode 1

@@ -40,6 +40,7 @@ public class MainActivity extends Activity {
 
 		// Configures the SessionBuilder
 		SessionBuilder.getInstance()
+		.setSurfaceView(mSurfaceView)
 		.setPreviewOrientation(90)
 		.setContext(getApplicationContext())
 		.setAudioEncoder(SessionBuilder.AUDIO_NONE)
