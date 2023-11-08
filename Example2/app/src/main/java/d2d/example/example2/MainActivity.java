@@ -4,31 +4,52 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
+import android.graphics.SurfaceTexture;
+import android.media.MediaCodec;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Size;
+import android.view.Surface;
 import android.view.SurfaceHolder;
+import android.view.TextureView;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.preference.PreferenceManager;
+
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 
 import d2d.testing.streaming.audio.AudioQuality;
+import d2d.testing.streaming.gui.AutoFitTextureView;
 import d2d.testing.streaming.sessions.Session;
 import d2d.testing.streaming.sessions.SessionBuilder;
+import d2d.testing.streaming.video.CameraController;
+import d2d.testing.streaming.video.VideoPacketizerDispatcher;
 import d2d.testing.streaming.video.VideoQuality;
 
 /**
  * A straightforward example of how to stream AMR and H.263 to some public IP using libstreaming.
  * Note that this example may not be using the latest version of libstreaming !
  */
-public class MainActivity extends Activity implements OnClickListener, Session.Callback, SurfaceHolder.Callback {
+public class MainActivity extends Activity implements OnClickListener, Session.Callback, TextureView.SurfaceTextureListener {
 
     private final static String TAG = "MainActivity";
 
     private Button mButton1, mButton2;
     private EditText mEditText;
     private Session mSession;
+    private AutoFitTextureView mTextureView;
+    private CameraController mCameraController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,9 +58,12 @@ public class MainActivity extends Activity implements OnClickListener, Session.C
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        mButton1 = (Button) findViewById(R.id.button1);
-        mButton2 = (Button) findViewById(R.id.button2);
-        mEditText = (EditText) findViewById(R.id.editText1);
+        CameraController.initiateInstance(this);
+
+        mTextureView = findViewById(R.id.textureView);
+        mButton1 = findViewById(R.id.button1);
+        mButton2 = findViewById(R.id.button2);
+        mEditText = findViewById(R.id.editText1);
 
         mSession = SessionBuilder.getInstance()
                 .setCallback(this)
@@ -51,9 +75,12 @@ public class MainActivity extends Activity implements OnClickListener, Session.C
                 .setVideoQuality(new VideoQuality(320, 240, 20, 500000))
                 .build();
 
+
+        mTextureView.setSurfaceTextureListener(this);
+
+
         mButton1.setOnClickListener(this);
         mButton2.setOnClickListener(this);
-
 
     }
 
@@ -86,7 +113,7 @@ public class MainActivity extends Activity implements OnClickListener, Session.C
             mButton1.setEnabled(false);
         } else {
             // Switch between the two cameras
-            mSession.switchCamera();
+            //mSession.switchCamera();
         }
     }
 
@@ -149,18 +176,41 @@ public class MainActivity extends Activity implements OnClickListener, Session.C
     }
 
     @Override
-    public void surfaceChanged(SurfaceHolder holder, int format, int width,
-                               int height) {
+    public void onSurfaceTextureAvailable(@NonNull SurfaceTexture surface, int width, int height) {
+        mCameraController = CameraController.getInstance();
+        List<Surface> surfaces = new ArrayList<>();
+        String cameraId = mCameraController.getCameraIdList()[0];
+        Size[] resolutions = mCameraController.getPrivType_2Target_MaxResolutions(cameraId, SurfaceTexture.class, MediaCodec.class);
+
+        mTextureView.setAspectRatio(resolutions[0].getWidth(), resolutions[0].getHeight());
+        SurfaceTexture surfaceTexture = mTextureView.getSurfaceTexture();
+        surfaceTexture.setDefaultBufferSize(resolutions[0].getWidth(), resolutions[0].getHeight());
+        Surface surface1 = new Surface(surfaceTexture);
+        surfaces.add(surface1);
+
+        try {
+            VideoPacketizerDispatcher.start(PreferenceManager.getDefaultSharedPreferences(this), VideoQuality.DEFAULT_VIDEO_QUALITY);
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Failed to start camera preview", Toast.LENGTH_LONG).show();
+        }
+        surfaces.add(VideoPacketizerDispatcher.getEncoderInputSurface());
+
+        mCameraController.startCamera(cameraId,surfaces);
+    }
+
+    @Override
+    public void onSurfaceTextureSizeChanged(@NonNull SurfaceTexture surface, int width, int height) {
 
     }
 
     @Override
-    public void surfaceCreated(SurfaceHolder holder) {
-        mSession.startPreview();
+    public boolean onSurfaceTextureDestroyed(@NonNull SurfaceTexture surface) {
+        return false;
     }
 
     @Override
-    public void surfaceDestroyed(SurfaceHolder holder) {
-        mSession.stop();
+    public void onSurfaceTextureUpdated(@NonNull SurfaceTexture surface) {
+
     }
 }
