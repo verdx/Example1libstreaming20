@@ -3,6 +3,7 @@ package d2d.example.example2;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.SurfaceTexture;
 import android.media.MediaCodec;
@@ -20,6 +21,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 
 import java.io.IOException;
@@ -28,7 +30,9 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
+import d2d.testing.streaming.StreamingRecord;
 import d2d.testing.streaming.audio.AudioQuality;
 import d2d.testing.streaming.gui.AutoFitTextureView;
 import d2d.testing.streaming.sessions.Session;
@@ -50,6 +54,9 @@ public class MainActivity extends Activity implements OnClickListener, Session.C
     private Session mSession;
     private AutoFitTextureView mTextureView;
     private CameraController mCameraController;
+    private boolean mRecording = false;
+    private String mNameStreaming = "default_stream";
+    private SessionBuilder mSessionBuilder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,15 +72,16 @@ public class MainActivity extends Activity implements OnClickListener, Session.C
         mButton2 = findViewById(R.id.button2);
         mEditText = findViewById(R.id.editText1);
 
-        mSession = SessionBuilder.getInstance()
+        mSessionBuilder = SessionBuilder.getInstance()
                 .setCallback(this)
                 .setPreviewOrientation(90)
                 .setContext(getApplicationContext())
                 .setAudioEncoder(SessionBuilder.AUDIO_NONE)
                 .setAudioQuality(new AudioQuality(16000, 32000))
                 .setVideoEncoder(SessionBuilder.VIDEO_H264)
-                .setVideoQuality(new VideoQuality(320, 240, 20, 500000))
-                .build();
+                .setVideoQuality(new VideoQuality(320, 240, 20, 500000));
+
+        mSession = mSessionBuilder.build();
 
 
         mTextureView.setSurfaceTextureListener(this);
@@ -86,6 +94,8 @@ public class MainActivity extends Activity implements OnClickListener, Session.C
 
     @Override
     public void onResume() {
+
+
         super.onResume();
         if (mSession.isStreaming()) {
             mButton1.setText(R.string.stop);
@@ -96,6 +106,8 @@ public class MainActivity extends Activity implements OnClickListener, Session.C
 
     @Override
     public void onDestroy() {
+        VideoPacketizerDispatcher.stop();
+        CameraController.getInstance().stopCamera();
         super.onDestroy();
         mSession.release();
     }
@@ -107,9 +119,15 @@ public class MainActivity extends Activity implements OnClickListener, Session.C
             mSession.setDestination(mEditText.getText().toString());
             if (!mSession.isStreaming()) {
                 mSession.configure();
+
+                final UUID localStreamUUID = UUID.randomUUID();
+                StreamingRecord.getInstance().addLocalStreaming(localStreamUUID, mNameStreaming, mSessionBuilder);
             } else {
+
+                StreamingRecord.getInstance().removeLocalStreaming();
                 mSession.stop();
             }
+
             mButton1.setEnabled(false);
         } else {
             // Switch between the two cameras
