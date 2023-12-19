@@ -15,5 +15,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Example2"
+rootProject.name = "Example2-sender"
 include ':app'

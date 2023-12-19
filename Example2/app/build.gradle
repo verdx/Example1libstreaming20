@@ -7,7 +7,7 @@ android {
     compileSdk 34
 
     defaultConfig {
-        applicationId "d2d.example.example2"
+        applicationId 'd2d.example.example2-sender'
         minSdk 26
         targetSdk 33
         versionCode 1
