@@ -49,7 +49,7 @@ public class MainActivity extends Activity implements OnClickListener, Session.C
 
     private final static String TAG = "MainActivity";
 
-    private Button mButton1, mButton2;
+    private Button mButtonRecord, mButtonSwap;
     private EditText mEditText;
     private Session mSession;
     private AutoFitTextureView mTextureView;
@@ -68,8 +68,8 @@ public class MainActivity extends Activity implements OnClickListener, Session.C
         CameraController.initiateInstance(this);
 
         mTextureView = findViewById(R.id.textureView);
-        mButton1 = findViewById(R.id.button1);
-        mButton2 = findViewById(R.id.button2);
+        mButtonRecord = findViewById(R.id.record);
+        mButtonSwap = findViewById(R.id.swap);
         mEditText = findViewById(R.id.editText1);
 
         mSessionBuilder = SessionBuilder.getInstance()
@@ -86,10 +86,8 @@ public class MainActivity extends Activity implements OnClickListener, Session.C
 
         mTextureView.setSurfaceTextureListener(this);
 
-
-        mButton1.setOnClickListener(this);
-        mButton2.setOnClickListener(this);
-
+        mButtonRecord.setOnClickListener(this);
+        mButtonSwap.setOnClickListener(this);
     }
 
     @Override
@@ -98,9 +96,9 @@ public class MainActivity extends Activity implements OnClickListener, Session.C
 
         super.onResume();
         if (mSession.isStreaming()) {
-            mButton1.setText(R.string.stop);
+            mButtonRecord.setText(R.string.stop);
         } else {
-            mButton1.setText(R.string.start);
+            mButtonRecord.setText(R.string.start);
         }
     }
 
@@ -114,7 +112,7 @@ public class MainActivity extends Activity implements OnClickListener, Session.C
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.button1) {
+        if (v.getId() == R.id.record) {
             // Starts/stops streaming
             mSession.setDestination(mEditText.getText().toString());
             if (!mSession.isStreaming()) {
@@ -128,7 +126,7 @@ public class MainActivity extends Activity implements OnClickListener, Session.C
                 mSession.stop();
             }
 
-            mButton1.setEnabled(false);
+            mButtonRecord.setEnabled(false);
         } else {
             // Switch between the two cameras
             //mSession.switchCamera();
@@ -142,7 +140,7 @@ public class MainActivity extends Activity implements OnClickListener, Session.C
 
     @Override
     public void onSessionError(int message, int streamType, Exception e) {
-        mButton1.setEnabled(true);
+        mButtonRecord.setEnabled(true);
         if (e != null) {
             logError(e.getMessage());
         }
@@ -168,15 +166,15 @@ public class MainActivity extends Activity implements OnClickListener, Session.C
     @Override
     public void onSessionStarted() {
         Log.d(TAG, "Session started.");
-        mButton1.setEnabled(true);
-        mButton1.setText(R.string.stop);
+        mButtonRecord.setEnabled(true);
+        mButtonRecord.setText(R.string.stop);
     }
 
     @Override
     public void onSessionStopped() {
         Log.d(TAG, "Session stopped.");
-        mButton1.setEnabled(true);
-        mButton1.setText(R.string.start);
+        mButtonRecord.setEnabled(true);
+        mButtonRecord.setText(R.string.start);
     }
 
     /**
