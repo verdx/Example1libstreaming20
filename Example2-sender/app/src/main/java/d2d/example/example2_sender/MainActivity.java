@@ -15,13 +15,18 @@ import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.Observer;
 
 import java.util.UUID;
 
+import d2d.testing.streaming.BasicViewModel;
+import d2d.testing.streaming.DefaultViewModel;
 import d2d.testing.streaming.StreamingRecord;
 import d2d.testing.streaming.audio.AudioQuality;
 import d2d.testing.streaming.gui.AutoFitTextureView;
@@ -35,7 +40,7 @@ import d2d.testing.streaming.video.VideoQuality;
  * A straightforward example of how to stream AMR and H.263 to some public IP using libstreaming.
  * Note that this example may not be using the latest version of libstreaming !
  */
-public class MainActivity extends Activity implements OnClickListener, Session.Callback, TextureView.SurfaceTextureListener {
+public class MainActivity extends AppCompatActivity implements OnClickListener, Session.Callback, TextureView.SurfaceTextureListener {
 
     private final static String TAG = "MainActivity";
 
@@ -45,6 +50,8 @@ public class MainActivity extends Activity implements OnClickListener, Session.C
     private AutoFitTextureView mTextureView;
     private final String mNameStreaming = "default_stream";
     private SessionBuilder mSessionBuilder;
+    private Boolean isNetworkAvailable;
+    private BasicViewModel mViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,9 +60,7 @@ public class MainActivity extends Activity implements OnClickListener, Session.C
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.CAMERA, android.Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO}, 2);
-        }
+        getPermissions();
 
         CameraController.initiateInstance(this);
 
@@ -81,6 +86,23 @@ public class MainActivity extends Activity implements OnClickListener, Session.C
 
         mButtonRecord.setOnClickListener(this);
         mButtonSwap.setOnClickListener(this);
+
+        mViewModel = new DefaultViewModel(this.getApplication());
+
+
+
+        mViewModel.isNetworkAvailable().observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+               isNetworkAvailable = aBoolean;
+            }
+        });
+    }
+
+    private void getPermissions() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{ Manifest.permission.CAMERA}, 1);
+        }
     }
 
     @Override
@@ -106,15 +128,18 @@ public class MainActivity extends Activity implements OnClickListener, Session.C
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.record) {
-            // Starts/stops streaming
-            mSession.setDestination(mEditText.getText().toString());
-            if (!mSession.isStreaming()) {
-                startStreaming();
+            if(isNetworkAvailable) {
+                // Starts/stops streaming
+                mSession.setDestination(mEditText.getText().toString());
+                if (!mSession.isStreaming()) {
+                    startStreaming();
+                } else {
+                    stopStreaming();
+                }
+                mButtonRecord.setEnabled(false);
             } else {
-                stopStreaming();
+                Toast.makeText(this, "The Network is not available", Toast.LENGTH_LONG).show();
             }
-
-            mButtonRecord.setEnabled(false);
         } else {
             // Switch between the two cameras
             CameraController.getInstance().switchCamera();
@@ -146,6 +171,7 @@ public class MainActivity extends Activity implements OnClickListener, Session.C
         if (e != null) {
             logError(e.getMessage());
         }
+        mButtonRecord.setText(R.string.start);
     }
 
     @Override
