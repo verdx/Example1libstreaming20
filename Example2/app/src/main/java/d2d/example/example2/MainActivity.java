@@ -53,9 +53,7 @@ public class MainActivity extends Activity implements OnClickListener, Session.C
     private EditText mEditText;
     private Session mSession;
     private AutoFitTextureView mTextureView;
-    private CameraController mCameraController;
-    private boolean mRecording = false;
-    private String mNameStreaming = "default_stream";
+    private final String mNameStreaming = "default_stream";
     private SessionBuilder mSessionBuilder;
 
     @Override
@@ -76,13 +74,14 @@ public class MainActivity extends Activity implements OnClickListener, Session.C
                 .setCallback(this)
                 .setPreviewOrientation(90)
                 .setContext(getApplicationContext())
-                .setAudioEncoder(SessionBuilder.AUDIO_NONE)
+                .setAudioEncoder(SessionBuilder.AUDIO_AAC)
                 .setAudioQuality(new AudioQuality(16000, 32000))
                 .setVideoEncoder(SessionBuilder.VIDEO_H264)
                 .setVideoQuality(new VideoQuality(320, 240, 20, 500000));
 
         mSession = mSessionBuilder.build();
 
+        CameraController.initiateInstance(this);
 
         mTextureView.setSurfaceTextureListener(this);
 
@@ -193,26 +192,8 @@ public class MainActivity extends Activity implements OnClickListener, Session.C
 
     @Override
     public void onSurfaceTextureAvailable(@NonNull SurfaceTexture surface, int width, int height) {
-        mCameraController = CameraController.getInstance();
-        List<Surface> surfaces = new ArrayList<>();
-        String cameraId = mCameraController.getCameraIdList()[0];
-        Size[] resolutions = mCameraController.getPrivType_2Target_MaxResolutions(cameraId, SurfaceTexture.class, MediaCodec.class);
-
-        mTextureView.setAspectRatio(resolutions[0].getWidth(), resolutions[0].getHeight());
-        SurfaceTexture surfaceTexture = mTextureView.getSurfaceTexture();
-        surfaceTexture.setDefaultBufferSize(resolutions[0].getWidth(), resolutions[0].getHeight());
-        Surface surface1 = new Surface(surfaceTexture);
-        surfaces.add(surface1);
-
-        try {
-            VideoPacketizerDispatcher.start(PreferenceManager.getDefaultSharedPreferences(this), VideoQuality.DEFAULT_VIDEO_QUALITY);
-        } catch (IOException e) {
-            e.printStackTrace();
-            Toast.makeText(this, "Failed to start camera preview", Toast.LENGTH_LONG).show();
-        }
-        surfaces.add(VideoPacketizerDispatcher.getEncoderInputSurface());
-
-        mCameraController.startCamera(cameraId,surfaces);
+        CameraController.getInstance().configureCamera(mTextureView, this);
+        CameraController.getInstance().startCamera();
     }
 
     @Override
