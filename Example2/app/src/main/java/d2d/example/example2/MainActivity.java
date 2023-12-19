@@ -1,35 +1,25 @@
 package d2d.example.example2;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.graphics.SurfaceTexture;
-import android.media.MediaCodec;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.Size;
-import android.view.Surface;
-import android.view.SurfaceHolder;
 import android.view.TextureView;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.preference.PreferenceManager;
 
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.Socket;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 import d2d.testing.streaming.StreamingRecord;
@@ -119,21 +109,30 @@ public class MainActivity extends Activity implements OnClickListener, Session.C
             // Starts/stops streaming
             mSession.setDestination(mEditText.getText().toString());
             if (!mSession.isStreaming()) {
-                mSession.configure();
-
-                final UUID localStreamUUID = UUID.randomUUID();
-                StreamingRecord.getInstance().addLocalStreaming(localStreamUUID, mNameStreaming, mSessionBuilder);
+                startStreaming();
             } else {
-
-                StreamingRecord.getInstance().removeLocalStreaming();
-                mSession.stop();
+                stopStreaming();
             }
 
             mButtonRecord.setEnabled(false);
         } else {
             // Switch between the two cameras
-            //mSession.switchCamera();
+            CameraController.getInstance().switchCamera();
         }
+    }
+
+    private void stopStreaming() {
+
+        StreamingRecord.getInstance().removeLocalStreaming();
+        mSession.stop();
+
+    }
+
+    private void startStreaming() {
+
+        mSession.configure();
+        final UUID localStreamUUID = UUID.randomUUID();
+        StreamingRecord.getInstance().addLocalStreaming(localStreamUUID, mNameStreaming, mSessionBuilder);
     }
 
     @Override
