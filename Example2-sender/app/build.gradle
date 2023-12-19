@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace 'd2d.example.example2'
+    namespace 'd2d.example.example2_sender'
     compileSdk 34
 
     defaultConfig {
-        applicationId 'd2d.example.example2-sender'
+        applicationId 'd2d.example.example2_sender'
         minSdk 26
         targetSdk 33
         versionCode 1

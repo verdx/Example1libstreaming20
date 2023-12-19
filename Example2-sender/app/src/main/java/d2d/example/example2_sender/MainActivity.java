@@ -1,4 +1,4 @@
-package d2d.example.example2;
+package d2d.example.example2_sender;
 
 import android.Manifest;
 import android.app.Activity;
