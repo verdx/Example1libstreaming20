@@ -1,7 +1,6 @@
 package d2d.example.example2_sender;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
@@ -23,18 +22,19 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 
+import net.verdx.libstreaming.BasicViewModel;
+import net.verdx.libstreaming.DefaultViewModel;
+import net.verdx.libstreaming.StreamingRecord;
+import net.verdx.libstreaming.audio.AudioQuality;
+import net.verdx.libstreaming.gui.AutoFitTextureView;
+import net.verdx.libstreaming.sessions.Session;
+import net.verdx.libstreaming.sessions.SessionBuilder;
+import net.verdx.libstreaming.video.CameraController;
+import net.verdx.libstreaming.video.VideoPacketizerDispatcher;
+import net.verdx.libstreaming.video.VideoQuality;
+
 import java.util.UUID;
 
-import d2d.testing.streaming.BasicViewModel;
-import d2d.testing.streaming.DefaultViewModel;
-import d2d.testing.streaming.StreamingRecord;
-import d2d.testing.streaming.audio.AudioQuality;
-import d2d.testing.streaming.gui.AutoFitTextureView;
-import d2d.testing.streaming.sessions.Session;
-import d2d.testing.streaming.sessions.SessionBuilder;
-import d2d.testing.streaming.video.CameraController;
-import d2d.testing.streaming.video.VideoPacketizerDispatcher;
-import d2d.testing.streaming.video.VideoQuality;
 
 /**
  * A straightforward example of how to stream AMR and H.263 to some public IP using libstreaming.
