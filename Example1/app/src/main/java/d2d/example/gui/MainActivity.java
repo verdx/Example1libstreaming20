@@ -11,8 +11,9 @@ import android.view.WindowManager;
 
 import com.example.gui.R;
 
-import d2d.testing.streaming.rtsp.RtspServer;
-import d2d.testing.streaming.sessions.SessionBuilder;
+import net.verdx.libstreaming.rtsp.RtspServer;
+import net.verdx.libstreaming.sessions.SessionBuilder;
+
 
 /**
  * A straightforward example of how to use the RTSP server included in libstreaming.
@@ -41,7 +42,7 @@ public class MainActivity extends Activity {
 		.setVideoEncoder(SessionBuilder.VIDEO_H264);
 		
 		// Starts the RTSP server
-		this.startService(new Intent(this,RtspServer.class));
+		this.startService(new Intent(this, RtspServer.class));
 
 	}
 	
