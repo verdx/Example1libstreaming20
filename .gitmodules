@@ -5,3 +5,6 @@
 [submodule "Example2-sender/app/src/main/java/d2d/testing/streaming"]
 	path = Example2-sender/app/src/main/java/d2d/testing/streaming
 	url = https://github.com/verdx/libstreaming2.0.git
+[submodule "Example2-receiver/libstreaming"]
+	path = Example2-receiver/libstreaming
+	url = https://github.com/verdx/libstreaming2.0.git

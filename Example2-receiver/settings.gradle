@@ -17,3 +17,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Example2-receiver"
 include ':app'
+include ':libstreaming'
