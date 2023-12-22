@@ -5,6 +5,3 @@
 [submodule "Example2-receiver/libstreaming"]
 	path = Example2-receiver/libstreaming
 	url = https://github.com/verdx/libstreaming2.0.git
-[submodule "Example2-sender/libstreaming"]
-	path = Example2-sender/libstreaming
-	url = https://github.com/verdx/libstreaming2.0.git
