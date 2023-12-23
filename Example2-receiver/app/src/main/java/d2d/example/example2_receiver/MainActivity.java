@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import net.verdx.libstreaming.BasicViewModel;
 import net.verdx.libstreaming.DefaultViewModel;
@@ -28,7 +29,7 @@ import java.util.UUID;
  * A straightforward example of how to stream AMR and H.263 to some public IP using libstreaming.
  * Note that this example may not be using the latest version of libstreaming !
  */
-public class MainActivity extends AppCompatActivity implements StreamingRecordObserver {
+public class MainActivity extends AppCompatActivity implements StreamingRecordObserver, SwipeRefreshLayout.OnRefreshListener {
 
     private final static String TAG = "MainActivity";
     private ArrayList<StreamDetail> streamList;
@@ -36,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements StreamingRecordOb
     private BasicViewModel mViewModel;
     private EditText mIncomingIpsEditText;
     private TextView mStatusTextView;
+    private SwipeRefreshLayout mArrayListRefresh;
     private Boolean isNetworkAvailable;
 
 
@@ -50,6 +52,9 @@ public class MainActivity extends AppCompatActivity implements StreamingRecordOb
         mStatusTextView = findViewById(R.id.statusTextView);
         mIncomingIpsEditText = findViewById(R.id.editTextIncomingIP);
         setIncomingIps();
+
+        mArrayListRefresh = findViewById(R.id.swiperefresh);
+        mArrayListRefresh.setOnRefreshListener(this);
 
         RecyclerView streamsListView = this.findViewById(R.id.streamsList);
         streamsListView.setLayoutManager(new LinearLayoutManager(this));
@@ -120,6 +125,13 @@ public class MainActivity extends AppCompatActivity implements StreamingRecordOb
     public void onStreamingDownloadStateChanged(Streaming streaming, boolean bIsDownloading) {
         final String path = streaming.getUUID().toString();
         this.runOnUiThread(() -> setStreamDownload(path, bIsDownloading));
+    }
+
+    @Override
+    public void onRefresh() {
+        setIncomingIps();
+        if (isNetworkAvailable) mViewModel.initNetwork();
+        mArrayListRefresh.setRefreshing(false);
     }
 
     private void addDefaultItemList(){
