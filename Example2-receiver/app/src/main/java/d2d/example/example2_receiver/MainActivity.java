@@ -3,6 +3,7 @@ package d2d.example.example2_receiver;
 import android.os.Bundle;
 import android.util.Pair;
 import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -33,6 +34,7 @@ public class MainActivity extends AppCompatActivity implements StreamingRecordOb
     private ArrayList<StreamDetail> streamList;
     private StreamListAdapter arrayAdapter;
     private BasicViewModel mViewModel;
+    private EditText mIncomingIpsEditText;
     private TextView mStatusTextView;
     private Boolean isNetworkAvailable;
 
@@ -46,6 +48,8 @@ public class MainActivity extends AppCompatActivity implements StreamingRecordOb
         streamList = new ArrayList<>();
         mViewModel = new DefaultViewModel(this.getApplication());
         mStatusTextView = findViewById(R.id.statusTextView);
+        mIncomingIpsEditText = findViewById(R.id.editTextIncomingIP);
+        setIncomingIps();
 
         RecyclerView streamsListView = this.findViewById(R.id.streamsList);
         streamsListView.setLayoutManager(new LinearLayoutManager(this));
@@ -62,6 +66,15 @@ public class MainActivity extends AppCompatActivity implements StreamingRecordOb
                 mViewModel.initNetwork();
             }
         });
+    }
+
+    private void setIncomingIps() {
+        String[] ipArray = mIncomingIpsEditText.getText().toString().split(",");
+        ArrayList<String> ipList = new ArrayList<>();
+        for(String ip: ipArray){
+            ipList.add(ip);
+        }
+        ((DefaultViewModel)mViewModel).setDestinationIpsArray(ipList);
     }
 
     @Override
