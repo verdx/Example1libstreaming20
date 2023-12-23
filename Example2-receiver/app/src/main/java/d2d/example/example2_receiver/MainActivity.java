@@ -1,11 +1,12 @@
 package d2d.example.example2_receiver;
 
-import android.app.Activity;
 import android.os.Bundle;
-import android.view.View;
-import android.view.View.OnClickListener;
+import android.util.Pair;
 import android.view.WindowManager;
+import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -26,12 +27,13 @@ import java.util.UUID;
  * A straightforward example of how to stream AMR and H.263 to some public IP using libstreaming.
  * Note that this example may not be using the latest version of libstreaming !
  */
-public class MainActivity extends Activity implements OnClickListener, StreamingRecordObserver {
+public class MainActivity extends AppCompatActivity implements StreamingRecordObserver {
 
     private final static String TAG = "MainActivity";
     private ArrayList<StreamDetail> streamList;
     private StreamListAdapter arrayAdapter;
     private BasicViewModel mViewModel;
+    private TextView mStatusTextView;
     private Boolean isNetworkAvailable;
 
 
@@ -39,10 +41,11 @@ public class MainActivity extends Activity implements OnClickListener, Streaming
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);\
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         streamList = new ArrayList<>();
         mViewModel = new DefaultViewModel(this.getApplication());
+        mStatusTextView = findViewById(R.id.statusTextView);
 
         RecyclerView streamsListView = this.findViewById(R.id.streamsList);
         streamsListView.setLayoutManager(new LinearLayoutManager(this));
@@ -51,7 +54,14 @@ public class MainActivity extends Activity implements OnClickListener, Streaming
         streamsListView.setAdapter(arrayAdapter);
 
         StreamingRecord.getInstance().addObserver(this);
-        
+
+        mViewModel.isNetworkAvailable().observe(this, (Observer<Boolean>) aBoolean -> {
+            isNetworkAvailable = aBoolean;
+            mStatusTextView.setText(getDeviceStatus());
+            if(isNetworkAvailable){
+                mViewModel.initNetwork();
+            }
+        });
     }
 
     @Override
@@ -62,15 +72,45 @@ public class MainActivity extends Activity implements OnClickListener, Streaming
     @Override
     public void onDestroy() {
         super.onDestroy();
+        StreamingRecord.getInstance().removeObserver(this);
     }
 
     @Override
-    public void onClick(View v) {
+    public void onLocalStreamingAvailable(UUID id, String name, SessionBuilder sessionBuilder) {}
+
+    @Override
+    public void onLocalStreamingUnavailable() {}
+
+    @Override
+    public void onStreamingAvailable(Streaming streaming, boolean bAllowDispatch) {
+        final String path = streaming.getUUID().toString();
+        this.runOnUiThread(() -> updateList(true,
+                path,
+                streaming.getName(),
+                streaming.getReceiveSession().getDestinationAddress().toString(),
+                streaming.getReceiveSession().getDestinationPort(),
+                streaming.isDownloading()));
+    }
+
+    @Override
+    public void onStreamingUnavailable(Streaming streaming) {
+        final String path = streaming.getUUID().toString();
+        this.runOnUiThread(() -> updateList(false,
+                path,
+                streaming.getName(),
+                streaming.getReceiveSession().getDestinationAddress().toString(),
+                streaming.getReceiveSession().getDestinationPort(),
+                streaming.isDownloading()));
+    }
+
+    @Override
+    public void onStreamingDownloadStateChanged(Streaming streaming, boolean bIsDownloading) {
+        final String path = streaming.getUUID().toString();
+        this.runOnUiThread(() -> setStreamDownload(path, bIsDownloading));
     }
 
     private void addDefaultItemList(){
         streamList.clear();
-        streamList.add(null);
         streamList.add(null);
         streamList.add(null);
         streamList.add(null);
@@ -80,28 +120,41 @@ public class MainActivity extends Activity implements OnClickListener, Streaming
         streamList.removeIf(Objects::isNull);
     }
 
-    @Override
-    public void onLocalStreamingAvailable(UUID id, String name, SessionBuilder sessionBuilder) {
+
+    public String getDeviceStatus() {
+        Pair<Boolean, String> status = mViewModel.getDeviceStatus(this);
+        if(status.first){
+            mStatusTextView.setTextColor(getResources().getColor(net.verdx.libstreaming.R.color.colorAccent, null));
+            return status.second;
+        }
+
+        mStatusTextView.setTextColor(getResources().getColor(net.verdx.libstreaming.R.color.colorRed, null));
+        return status.second;
 
     }
 
-    @Override
-    public void onLocalStreamingUnavailable() {
-
+    public void updateList(boolean on_off, String uuid, String name, String ip, int port, boolean download){
+        removeDefaultItemList();
+        if(!ip.equals("0.0.0.0")) {
+            StreamDetail detail = new StreamDetail(uuid, name, ip, port, download);
+            if (on_off) {
+                if (!streamList.contains(detail))
+                    streamList.add(detail);
+            } else {
+                streamList.remove(detail);
+            }
+            if(streamList.size() == 0) addDefaultItemList();
+            arrayAdapter.setStreamsData(streamList);
+        }
     }
 
-    @Override
-    public void onStreamingAvailable(Streaming streaming, boolean bAllowDispatch) {
-
-    }
-
-    @Override
-    public void onStreamingUnavailable(Streaming streaming) {
-
-    }
-
-    @Override
-    public void onStreamingDownloadStateChanged(Streaming streaming, boolean bIsDownloading) {
-
+    public void setStreamDownload(String uuid, boolean isDownload){
+        for(StreamDetail value: streamList){
+            if (value.getUuid().equals(uuid)) {
+                value.setDownload(isDownload);
+                arrayAdapter.setStreamsData(streamList);
+                return;
+            }
+        }
     }
 }

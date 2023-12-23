@@ -11,14 +11,23 @@
         android:id="@+id/editTextIncomingIP"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="Enter incoming streams IP"
+        android:hint="@string/enter_incoming_streams_ip"
         android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/statusTextView"
+        android:singleLine="true"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/editTextIncomingIP"
+        android:text="@string/network_is_available"/>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swiperefresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/editTextIncomingIP"
+        android:layout_below="@id/statusTextView"
         android:layout_marginTop="20dp">
 
 
