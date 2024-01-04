@@ -138,13 +138,17 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         if (v.getId() == R.id.record) {
             if(isNetworkAvailable) {
                 // Starts/stops streaming
-                mSession.setDestination(mEditText.getText().toString());
-                if (!mSession.isStreaming()) {
-                    startStreaming();
-                } else {
-                    stopStreaming();
+                try {
+                    mSession.setDestination(mEditText.getText().toString());
+                    if (!mSession.isStreaming()) {
+                        startStreaming();
+                    } else {
+                        stopStreaming();
+                    }
+                    mButtonRecord.setEnabled(false);
+                } catch (IllegalArgumentException e) {
+                    Toast.makeText(this,  e.getMessage(), Toast.LENGTH_LONG).show();
                 }
-                mButtonRecord.setEnabled(false);
             } else {
                 Toast.makeText(this, "The Network is not available", Toast.LENGTH_LONG).show();
             }
