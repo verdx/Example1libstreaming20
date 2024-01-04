@@ -43,7 +43,7 @@
         android:ems="10"
         android:gravity="center"
         android:singleLine="true"
-        android:text="Enter IP to send the stream to" />
+        android:hint="Enter IP address to send the stream to"/>
 
     <TextView
         android:layout_width="wrap_content"
