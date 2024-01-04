@@ -8,12 +8,14 @@ import android.content.pm.PackageManager;
 import android.graphics.SurfaceTexture;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Pair;
 import android.view.TextureView;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -43,9 +45,9 @@ import java.util.UUID;
 public class MainActivity extends AppCompatActivity implements OnClickListener, Session.Callback, TextureView.SurfaceTextureListener {
 
     private final static String TAG = "MainActivity";
-
     private Button mButtonRecord, mButtonSwap;
     private EditText mEditText;
+    private TextView mStatusTextView;
     private Session mSession;
     private AutoFitTextureView mTextureView;
     private final String mNameStreaming = "default_stream";
@@ -68,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         mButtonRecord = findViewById(R.id.record);
         mButtonSwap = findViewById(R.id.swap);
         mEditText = findViewById(R.id.editText1);
+        mStatusTextView = findViewById(R.id.statusTextView);
 
         mSessionBuilder = SessionBuilder.getInstance()
                 .setCallback(this)
@@ -89,12 +92,14 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
 
         mViewModel = new DefaultViewModel(this.getApplication());
 
-
-
         mViewModel.isNetworkAvailable().observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
                isNetworkAvailable = aBoolean;
+               mStatusTextView.setText(getDeviceStatus());
+               if(isNetworkAvailable){
+                   mViewModel.initNetwork();
+               }
             }
         });
     }
@@ -158,6 +163,18 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         mSession.configure();
         final UUID localStreamUUID = UUID.randomUUID();
         StreamingRecord.getInstance().addLocalStreaming(localStreamUUID, mNameStreaming, mSessionBuilder);
+    }
+
+    public String getDeviceStatus() {
+        Pair<Boolean, String> status = mViewModel.getDeviceStatus(this);
+        if(status.first){
+            mStatusTextView.setTextColor(getResources().getColor(net.verdx.libstreaming.R.color.colorAccent, null));
+            return status.second;
+        }
+
+        mStatusTextView.setTextColor(getResources().getColor(net.verdx.libstreaming.R.color.colorRed, null));
+        return status.second;
+
     }
 
     @Override

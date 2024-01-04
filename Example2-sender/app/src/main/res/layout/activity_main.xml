@@ -37,12 +37,24 @@
         android:id="@+id/editText1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/layout1"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_above="@+id/statusTextView"
         android:ems="10"
         android:gravity="center"
         android:singleLine="true"
         android:text="192.168.42.200" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/statusTextView"
+        android:singleLine="true"
+        android:layout_centerHorizontal="true"
+        android:text="Network not available"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_above="@id/layout1"
+        android:gravity="center"/>
 
 </RelativeLayout>
