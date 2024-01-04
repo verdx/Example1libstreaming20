@@ -22,6 +22,7 @@ import net.verdx.libstreaming.gui.StreamDetail;
 import net.verdx.libstreaming.sessions.SessionBuilder;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -76,9 +77,7 @@ public class MainActivity extends AppCompatActivity implements StreamingRecordOb
     private void setIncomingIps() {
         String[] ipArray = mIncomingIpsEditText.getText().toString().split(",");
         ArrayList<String> ipList = new ArrayList<>();
-        for(String ip: ipArray){
-            ipList.add(ip);
-        }
+        Collections.addAll(ipList, ipArray);
         ((DefaultViewModel)mViewModel).setDestinationIpsArray(ipList);
     }
 
