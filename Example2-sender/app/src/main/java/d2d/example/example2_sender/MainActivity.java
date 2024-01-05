@@ -26,7 +26,9 @@ import androidx.lifecycle.Observer;
 
 import net.verdx.libstreaming.BasicViewModel;
 import net.verdx.libstreaming.DefaultViewModel;
+import net.verdx.libstreaming.Streaming;
 import net.verdx.libstreaming.StreamingRecord;
+import net.verdx.libstreaming.StreamingRecordObserver;
 import net.verdx.libstreaming.audio.AudioQuality;
 import net.verdx.libstreaming.gui.AutoFitTextureView;
 import net.verdx.libstreaming.sessions.Session;
@@ -35,6 +37,8 @@ import net.verdx.libstreaming.video.CameraController;
 import net.verdx.libstreaming.video.VideoPacketizerDispatcher;
 import net.verdx.libstreaming.video.VideoQuality;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.UUID;
 
 
@@ -42,17 +46,17 @@ import java.util.UUID;
  * A straightforward example of how to stream AMR and H.263 to some public IP using libstreaming.
  * Note that this example may not be using the latest version of libstreaming !
  */
-public class MainActivity extends AppCompatActivity implements OnClickListener, Session.Callback, TextureView.SurfaceTextureListener {
+public class MainActivity extends AppCompatActivity implements OnClickListener, TextureView.SurfaceTextureListener, StreamingRecordObserver {
 
     private final static String TAG = "MainActivity";
     private Button mButtonRecord, mButtonSwap;
     private EditText mEditText;
     private TextView mStatusTextView;
-    private Session mSession;
     private AutoFitTextureView mTextureView;
     private final String mNameStreaming = "default_stream";
     private SessionBuilder mSessionBuilder;
     private Boolean isNetworkAvailable;
+    private boolean isStreaming = false;
     private BasicViewModel mViewModel;
 
     @Override
@@ -65,6 +69,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         getPermissions();
 
         CameraController.initiateInstance(this);
+        StreamingRecord.getInstance().addObserver(this);
 
         mTextureView = findViewById(R.id.textureView);
         mButtonRecord = findViewById(R.id.record);
@@ -73,15 +78,12 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         mStatusTextView = findViewById(R.id.statusTextView);
 
         mSessionBuilder = SessionBuilder.getInstance()
-                .setCallback(this)
                 .setPreviewOrientation(90)
                 .setContext(getApplicationContext())
                 .setAudioEncoder(SessionBuilder.AUDIO_AAC)
                 .setAudioQuality(new AudioQuality(16000, 32000))
                 .setVideoEncoder(SessionBuilder.VIDEO_H264)
                 .setVideoQuality(new VideoQuality(320, 240, 20, 500000));
-
-        mSession = mSessionBuilder.build();
 
         CameraController.initiateInstance(this);
 
@@ -91,6 +93,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         mButtonSwap.setOnClickListener(this);
 
         mViewModel = new DefaultViewModel(this.getApplication());
+        ((DefaultViewModel)mViewModel).setDestinationIpsArray(new ArrayList<String>());
 
         mViewModel.isNetworkAvailable().observe(this, new Observer<Boolean>() {
             @Override
@@ -116,9 +119,8 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
     @Override
     public void onResume() {
 
-
         super.onResume();
-        if (mSession.isStreaming()) {
+        if (isStreaming) {
             mButtonRecord.setText(R.string.stop);
         } else {
             mButtonRecord.setText(R.string.start);
@@ -127,10 +129,12 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
 
     @Override
     public void onDestroy() {
+        if(isStreaming) {
+            stopStreaming();
+        }
         VideoPacketizerDispatcher.stop();
         CameraController.getInstance().stopCamera();
         super.onDestroy();
-        mSession.release();
     }
 
     @Override
@@ -139,13 +143,18 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
             if(isNetworkAvailable) {
                 // Starts/stops streaming
                 try {
-                    mSession.setDestination(mEditText.getText().toString());
-                    if (!mSession.isStreaming()) {
+                    setDestinationIps();
+                    if (!isStreaming) {
+                        if (mEditText.getText().toString().equals("")) {
+                            Toast.makeText(this, "Please enter the destination IP", Toast.LENGTH_LONG).show();
+                            return;
+                        }
+                        mButtonRecord.setEnabled(false);
                         startStreaming();
                     } else {
+                        mButtonRecord.setEnabled(false);
                         stopStreaming();
                     }
-                    mButtonRecord.setEnabled(false);
                 } catch (IllegalArgumentException e) {
                     Toast.makeText(this,  e.getMessage(), Toast.LENGTH_LONG).show();
                 }
@@ -161,15 +170,14 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
     private void stopStreaming() {
 
         StreamingRecord.getInstance().removeLocalStreaming();
-        mSession.stop();
-
+        isStreaming = false;
     }
 
     private void startStreaming() {
 
-        mSession.configure();
         final UUID localStreamUUID = UUID.randomUUID();
         StreamingRecord.getInstance().addLocalStreaming(localStreamUUID, mNameStreaming, mSessionBuilder);
+        isStreaming = true;
     }
 
     public String getDeviceStatus() {
@@ -184,50 +192,13 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
 
     }
 
-    @Override
-    public void onBitrateUpdate(long bitrate) {
-        Log.d(TAG, "Bitrate: " + bitrate);
+    private void setDestinationIps() {
+        String[] ipArray = mEditText.getText().toString().replaceAll("\\s","").split(",");
+        ArrayList<String> ipList = new ArrayList<>();
+        Collections.addAll(ipList, ipArray);
+        ((DefaultViewModel)mViewModel).setDestinationIpsArray(ipList);
     }
 
-    @Override
-    public void onSessionError(int message, int streamType, Exception e) {
-        mButtonRecord.setEnabled(true);
-        if (e != null) {
-            logError(e.getMessage());
-        }
-        mButtonRecord.setText(R.string.start);
-    }
-
-    @Override
-
-    public void onPreviewStarted() {
-        Log.d(TAG, "Preview started.");
-    }
-
-    @Override
-    public void onSessionConfigured() {
-        Log.d(TAG, "Preview configured.");
-        // Once the stream is configured, you can get a SDP formatted session description
-        // that you can send to the receiver of the stream.
-        // For example, to receive the stream in VLC, store the session description in a .sdp file
-        // and open it with VLC while streaming.
-        Log.d(TAG, mSession.getSessionDescription());
-        mSession.start();
-    }
-
-    @Override
-    public void onSessionStarted() {
-        Log.d(TAG, "Session started.");
-        mButtonRecord.setEnabled(true);
-        mButtonRecord.setText(R.string.stop);
-    }
-
-    @Override
-    public void onSessionStopped() {
-        Log.d(TAG, "Session stopped.");
-        mButtonRecord.setEnabled(true);
-        mButtonRecord.setText(R.string.start);
-    }
 
     /**
      * Displays a popup to report the error to the user
@@ -247,6 +218,37 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
     public void onSurfaceTextureAvailable(@NonNull SurfaceTexture surface, int width, int height) {
         CameraController.getInstance().configureCamera(mTextureView, this);
         CameraController.getInstance().startCamera();
+    }
+
+    @Override
+    public void onLocalStreamingAvailable(UUID id, String name, SessionBuilder sessionBuilder) {
+        Log.d(TAG, "Streaming started.");
+        mButtonRecord.setEnabled(true);
+        mButtonRecord.setText(R.string.stop);
+    }
+
+    @Override
+    public void onLocalStreamingUnavailable() {
+        Log.d(TAG, "Streaming stopped.");
+        mButtonRecord.setEnabled(true);
+        mButtonRecord.setText(R.string.start);
+    }
+
+
+    // NOT USED
+    @Override
+    public void onStreamingAvailable(Streaming streaming, boolean bAllowDispatch) {
+
+    }
+
+    @Override
+    public void onStreamingUnavailable(Streaming streaming) {
+
+    }
+
+    @Override
+    public void onStreamingDownloadStateChanged(Streaming streaming, boolean bIsDownloading) {
+
     }
 
     @Override
