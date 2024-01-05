@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements StreamingRecordOb
     }
 
     private void setIncomingIps() {
-        String[] ipArray = mIncomingIpsEditText.getText().toString().split(",");
+        String[] ipArray = mIncomingIpsEditText.getText().toString().replaceAll("\\s","").split(",");
         ArrayList<String> ipList = new ArrayList<>();
         Collections.addAll(ipList, ipArray);
         ((DefaultViewModel)mViewModel).setDestinationIpsArray(ipList);
