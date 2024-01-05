@@ -31,6 +31,8 @@
             </intent-filter>
         </activity>
 
+        <activity android:name="net.verdx.libstreaming.gui.ViewStreamActivity" />
+
 
         <service android:name="net.verdx.libstreaming.rtsp.RtspServer" />
     </application>
