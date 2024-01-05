@@ -31,7 +31,6 @@ import net.verdx.libstreaming.StreamingRecord;
 import net.verdx.libstreaming.StreamingRecordObserver;
 import net.verdx.libstreaming.audio.AudioQuality;
 import net.verdx.libstreaming.gui.AutoFitTextureView;
-import net.verdx.libstreaming.sessions.Session;
 import net.verdx.libstreaming.sessions.SessionBuilder;
 import net.verdx.libstreaming.video.CameraController;
 import net.verdx.libstreaming.video.VideoPacketizerDispatcher;
@@ -53,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
     private EditText mEditText;
     private TextView mStatusTextView;
     private AutoFitTextureView mTextureView;
-    private final String mNameStreaming = "default_stream";
+    private final String mStreamName = "defaultName_sender";
     private SessionBuilder mSessionBuilder;
     private Boolean isNetworkAvailable;
     private boolean isStreaming = false;
@@ -176,7 +175,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
     private void startStreaming() {
 
         final UUID localStreamUUID = UUID.randomUUID();
-        StreamingRecord.getInstance().addLocalStreaming(localStreamUUID, mNameStreaming, mSessionBuilder);
+        StreamingRecord.getInstance().addLocalStreaming(localStreamUUID, mStreamName, mSessionBuilder);
         isStreaming = true;
     }
 
