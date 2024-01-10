@@ -1,0 +1,55 @@
+<resources>
+	<string name="app_name_title">Example3</string>
+	<string name="app_name">Example3</string>
+	<string name="no_streams">No Streams Available</string>
+	<string name="string_on_off">\On/Off WIFI</string>
+	<string name="string_discover_peers">\Discover peers</string>
+	<string name="string_transfer_file">\Transfer File</string>
+	<string name="string_camera">Camera</string>
+	<string name="mi_dispositivo">MY DEVICE</string>
+	<string name="boton_record">RECORD</string>
+	<string name="record_video">play</string>
+	<string name="change_camera">change camera</string>
+	<string name="dispositivos_encontrados">AVAILABLE STREAMS (%1$d)</string>
+	<string name="connection_status">Connection Status</string>
+	<string name="home">Home</string>
+	<string name="settings">Settings</string>
+	<string name="information">Information</string>
+	<string name="menu_gallery">Gallery</string>
+    <string name="witness">Witness</string>
+	<string name="humanitarian">Humanitarian</string>
+	<string name="description_mode">Select the app use scenario</string>
+	<string name="witness_desc">To broadcast videos privately</string>
+    <string name="humanitarian_desc">To alert of risk situations when there is no internet connection. <b><i>Metadata like location may be shared</i></b></string>
+	<string name="todo">TODO</string>
+	<string name="mode_witness">w</string>
+	<string name="mode_humanitarian">h</string>
+	<string name="name_dialog_header">STREAM NAME</string>
+	<string name="name_dialog_hint">Stream name</string>
+	<string name="my_device_info_mode">Mode:</string>
+	<string name="my_device_info_name">Name:</string>
+	<string name="record_not_available">The network is not available, you can not record</string>
+
+	<string name="video_category_prefs">Video preferences</string>
+	<string name="save_my_streaming_prefs">Save my streaming</string>
+
+	<string name="ip_category_prefs">Who will receive the stream?</string>
+	<string name="ip_addrs_edittextprefs">IP Addresses</string>
+	<string name="ip_addrs_summary">Enter the IP address you want to connect to</string>
+	<string name="ip_addrs_dialog">Enter IP Address</string>
+
+	<string name="wfa_available_str">Wifi Aware available</string>
+	<string name="wfa_unavailable_str">Wifi Aware unavailable</string>
+	<string name="defaultnet_unavailable_str">Network unavailable</string>
+	<string name="unknown_net_availability_str">Network Availability unknown</string>
+
+	<string name="save_str">SAVE</string>
+	<string name="cancel_str">CANCEL</string>
+
+
+	<string name="stream_stop_str">Stopped retransmitting the streaming</string>
+	<string name="record_start_failed_str">Failed to start recording</string>
+
+
+
+</resources>

@@ -1,0 +1,21 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+	<PreferenceCategory app:title="@string/video_category_prefs">
+
+		<SwitchPreferenceCompat
+			app:key="saveMyStreaming" app:title="@string/save_my_streaming_prefs" />
+
+	</PreferenceCategory>
+	
+	<PreferenceCategory
+		app:title="@string/ip_category_prefs"
+		app:key="ip_input_category">
+		<EditTextPreference
+			app:key="PREF_IP_ADDRESS"
+			app:title="@string/ip_addrs_edittextprefs"
+			app:summary="@string/ip_addrs_summary"
+			app:dialogTitle="@string/ip_addrs_dialog"/>
+<!--			app:dialogMessage="Please enter the IP address you want to connect to" />-->
+	</PreferenceCategory>
+
+</PreferenceScreen>
