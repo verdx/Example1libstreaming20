@@ -3,7 +3,6 @@ package d2d.example.example2_receiver;
 import android.os.Bundle;
 import android.util.Pair;
 import android.view.WindowManager;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,7 +21,6 @@ import net.verdx.libstreaming.gui.StreamDetail;
 import net.verdx.libstreaming.sessions.SessionBuilder;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -33,12 +31,12 @@ import java.util.UUID;
 public class MainActivity extends AppCompatActivity implements StreamingRecordObserver, SwipeRefreshLayout.OnRefreshListener {
 
     private final static String TAG = "MainActivity";
-    private ArrayList<StreamDetail> streamList;
-    private StreamListAdapter arrayAdapter;
+    private ArrayList<StreamDetail> mStreamList;
+    private StreamListAdapter mArrayAdapter;
     private BasicViewModel mViewModel;
     private TextView mStatusTextView;
     private SwipeRefreshLayout mArrayListRefresh;
-    private Boolean isNetworkAvailable;
+    private Boolean mIsNetworkAvailable;
 
 
     @Override
@@ -55,12 +53,12 @@ public class MainActivity extends AppCompatActivity implements StreamingRecordOb
         /*
         Initialize the RecyclerView with an adapter and an array list
          */
-        streamList = new ArrayList<>();
+        mStreamList = new ArrayList<>();
         RecyclerView streamsListView = this.findViewById(R.id.streamsList);
         streamsListView.setLayoutManager(new LinearLayoutManager(this));
         addDefaultItemList();
-        arrayAdapter = new StreamListAdapter(this, streamList, this);
-        streamsListView.setAdapter(arrayAdapter);
+        mArrayAdapter = new StreamListAdapter(this, mStreamList, this);
+        streamsListView.setAdapter(mArrayAdapter);
 
         /*
         Initialize the StreamingRecord singleton and add this activity as an observer
@@ -72,9 +70,9 @@ public class MainActivity extends AppCompatActivity implements StreamingRecordOb
          */
         mViewModel = new DefaultViewModel(this.getApplication());
         mViewModel.isNetworkAvailable().observe(this, (Observer<Boolean>) aBoolean -> {
-            isNetworkAvailable = aBoolean;
+            mIsNetworkAvailable = aBoolean;
             mStatusTextView.setText(getDeviceStatus());
-            if(isNetworkAvailable){
+            if(mIsNetworkAvailable){
                 mViewModel.initNetwork();
             }
         });
@@ -126,29 +124,29 @@ public class MainActivity extends AppCompatActivity implements StreamingRecordOb
 
     @Override
     public void onRefresh() {
-        ArrayList<Streaming> streamings = new ArrayList<>(StreamingRecord.getInstance().getStreamings());
-        if (isNetworkAvailable) mViewModel.initNetwork();
-        for(Streaming streaming: streamings){
-            final String path = streaming.getUUID().toString();
+        ArrayList<Streaming> streamList = new ArrayList<>(StreamingRecord.getInstance().getStreamings());
+        if (mIsNetworkAvailable) mViewModel.initNetwork();
+        for(Streaming stream: streamList){
+            final String path = stream.getUUID().toString();
             this.runOnUiThread(() -> updateList(true,
                     path,
-                    streaming.getName(),
-                    streaming.getReceiveSession().getDestinationAddress().toString(),
-                    streaming.getReceiveSession().getDestinationPort(),
-                    streaming.isDownloading()));
+                    stream.getName(),
+                    stream.getReceiveSession().getDestinationAddress().toString(),
+                    stream.getReceiveSession().getDestinationPort(),
+                    stream.isDownloading()));
         }
         mArrayListRefresh.setRefreshing(false);
     }
 
     private void addDefaultItemList(){
-        streamList.clear();
-        streamList.add(null);
-        streamList.add(null);
-        streamList.add(null);
+        mStreamList.clear();
+        mStreamList.add(null);
+        mStreamList.add(null);
+        mStreamList.add(null);
     }
 
     private void removeDefaultItemList(){
-        streamList.removeIf(Objects::isNull);
+        mStreamList.removeIf(Objects::isNull);
     }
 
 
@@ -169,21 +167,21 @@ public class MainActivity extends AppCompatActivity implements StreamingRecordOb
         if(!ip.equals("0.0.0.0")) {
             StreamDetail detail = new StreamDetail(uuid, name, ip, port, download);
             if (on_off) {
-                if (!streamList.contains(detail))
-                    streamList.add(detail);
+                if (!mStreamList.contains(detail))
+                    mStreamList.add(detail);
             } else {
-                streamList.remove(detail);
+                mStreamList.remove(detail);
             }
-            if(streamList.size() == 0) addDefaultItemList();
-            arrayAdapter.setStreamsData(streamList);
+            if(mStreamList.size() == 0) addDefaultItemList();
+            mArrayAdapter.setStreamsData(mStreamList);
         }
     }
 
     public void setStreamDownload(String uuid, boolean isDownload){
-        for(StreamDetail value: streamList){
+        for(StreamDetail value: mStreamList){
             if (value.getUuid().equals(uuid)) {
                 value.setDownload(isDownload);
-                arrayAdapter.setStreamsData(streamList);
+                mArrayAdapter.setStreamsData(mStreamList);
                 return;
             }
         }
