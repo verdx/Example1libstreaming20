@@ -146,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements StreamingRecordOb
 
 
     public String getDeviceStatus() {
-        Pair<Boolean, String> status = mViewModel.getDeviceStatus(this);
+        Pair<Boolean, String> status = mViewModel.getDeviceNetworkStatus(this);
         if(status.first){
             mStatusTextView.setTextColor(getResources().getColor(net.verdx.libstreaming.R.color.colorAccent, null));
             return status.second;

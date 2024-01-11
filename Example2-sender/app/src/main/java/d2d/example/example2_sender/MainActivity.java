@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
     private EditText mEditText;
     private TextView mStatusTextView;
     private AutoFitTextureView mTextureView;
-    private final String mStreamName = "defaultName_sender";
+    private final String mStreamName = "defaultStream";
     private SessionBuilder mSessionBuilder;
     private Boolean isNetworkAvailable;
     private boolean isStreaming = false;
@@ -61,21 +61,39 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        /*
+        Set the UI, which includes an AutoFitTextureView to display the camera preview.
+         */
         setContentView(R.layout.activity_main);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        getPermissions();
-
-        CameraController.initiateInstance(this);
-        StreamingRecord.getInstance().addObserver(this);
-
+        /*
+        Initialize the UI elements
+         */
         mTextureView = findViewById(R.id.textureView);
         mButtonRecord = findViewById(R.id.record);
         mButtonSwap = findViewById(R.id.swap);
         mEditText = findViewById(R.id.editText1);
         mStatusTextView = findViewById(R.id.statusTextView);
+        mButtonRecord.setOnClickListener(this);
+        mButtonSwap.setOnClickListener(this);
 
+        /*
+        Manually check for the needed permissions
+         */
+        getPermissions();
+
+        /*
+        Add this class as an observer to the static StreamingRecord instance and the TextureView's Callbacks
+         */
+        StreamingRecord.getInstance().addObserver(this);
+        mTextureView.setSurfaceTextureListener(this);
+
+        /*
+        Initialize the SessionBuilder with the desired parameters
+         */
         mSessionBuilder = SessionBuilder.getInstance()
                 .setPreviewOrientation(90)
                 .setContext(getApplicationContext())
@@ -84,24 +102,21 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
                 .setVideoEncoder(SessionBuilder.VIDEO_H264)
                 .setVideoQuality(new VideoQuality(320, 240, 20, 500000));
 
+        /*
+        Initialize the CameraController and ViewModel. This one will create the Network.
+         */
         CameraController.initiateInstance(this);
-
-        mTextureView.setSurfaceTextureListener(this);
-
-        mButtonRecord.setOnClickListener(this);
-        mButtonSwap.setOnClickListener(this);
-
         mViewModel = new DefaultViewModel(this.getApplication());
-        ((DefaultViewModel)mViewModel).setDestinationIpsArray(new ArrayList<String>());
 
-        mViewModel.isNetworkAvailable().observe(this, new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-               isNetworkAvailable = aBoolean;
-               mStatusTextView.setText(getDeviceStatus());
-               if(isNetworkAvailable){
-                   mViewModel.initNetwork();
-               }
+        /*
+        We must observe the network availability to know when to start the server and client and in
+        case of network loss, restart them.
+         */
+        mViewModel.isNetworkAvailable().observe(this, aBoolean -> {
+            isNetworkAvailable = aBoolean;
+            mStatusTextView.setText(getDeviceStatus());
+            if(isNetworkAvailable){
+                mViewModel.initNetwork();
             }
         });
     }
@@ -131,7 +146,6 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         if(isStreaming) {
             stopStreaming();
         }
-        VideoPacketizerDispatcher.stop();
         CameraController.getInstance().stopCamera();
         super.onDestroy();
     }
@@ -180,7 +194,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
     }
 
     public String getDeviceStatus() {
-        Pair<Boolean, String> status = mViewModel.getDeviceStatus(this);
+        Pair<Boolean, String> status = mViewModel.getDeviceNetworkStatus(this);
         if(status.first){
             mStatusTextView.setTextColor(getResources().getColor(net.verdx.libstreaming.R.color.colorAccent, null));
             return status.second;
@@ -198,20 +212,6 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         ((DefaultViewModel)mViewModel).setDestinationIpsArray(ipList);
     }
 
-
-    /**
-     * Displays a popup to report the error to the user
-     */
-    private void logError(final String msg) {
-        final String error = (msg == null) ? "Error unknown" : msg;
-        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-        builder.setMessage(error).setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-            }
-        });
-        AlertDialog dialog = builder.create();
-        dialog.show();
-    }
 
     @Override
     public void onSurfaceTextureAvailable(@NonNull SurfaceTexture surface, int width, int height) {

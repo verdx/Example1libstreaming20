@@ -63,7 +63,7 @@ public class StreamActivity extends AppCompatActivity implements TextureView.Sur
                 .setPreviewOrientation(90)
                 .setContext(getApplicationContext())
                 .setAudioEncoder(SessionBuilder.AUDIO_AAC)
-                .setVideoEncoder(SessionBuilder.VIDEO_H264)
+                .setVideoEncoder(SessionBuilder.VIDEO_NONE)
                 .setVideoQuality(mVideoQuality);
 
         /* Initializes the buttons and sets listeners on them */
@@ -86,7 +86,7 @@ public class StreamActivity extends AppCompatActivity implements TextureView.Sur
      */
     public void startStreaming() {
         final UUID localStreamUUID = UUID.randomUUID();
-        final String mNameStreaming = "Streaming " + localStreamUUID.toString();
+        final String mNameStreaming = "defaultStream";
         StreamingRecord.getInstance().addLocalStreaming(localStreamUUID, mNameStreaming, mSessionBuilder);
 
         recordButton.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_stop));
