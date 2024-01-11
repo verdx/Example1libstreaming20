@@ -16,6 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import net.verdx.libstreaming.BasicViewModel;
 import net.verdx.libstreaming.DefaultViewModel;
@@ -33,13 +34,14 @@ import java.util.UUID;
 import d2d.example.example3.R;
 import d2d.example.example3.StreamActivity;
 
-public class MainFragment extends Fragment implements StreamingRecordObserver, View.OnClickListener {
-    private TextView myStatus;
-    private TextView numStreams;
-    private ArrayList<StreamDetail> streamList;
-    private StreamListAdapter arrayAdapter;
+public class MainFragment extends Fragment implements StreamingRecordObserver, View.OnClickListener, SwipeRefreshLayout.OnRefreshListener {
+    private TextView mStatus;
+    private TextView mNumStreams;
+    private SwipeRefreshLayout mArrayListRefresh;
+    private ArrayList<StreamDetail> mStreamList;
+    private StreamListAdapter mArrayAdapter;
     private BasicViewModel mViewModel;
-    private Boolean isNetworkAvailable;
+    private Boolean mIsNetworkAvailable;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -48,7 +50,7 @@ public class MainFragment extends Fragment implements StreamingRecordObserver, V
         /*
           Create a new ArrayList of StreamDetail, which will store the available streams information.
          */
-        streamList = new ArrayList<>();
+        mStreamList = new ArrayList<>();
         /*
           Create a new instance of DefaultViewModel, an intermediary class used to manage the network.
          */
@@ -71,8 +73,8 @@ public class MainFragment extends Fragment implements StreamingRecordObserver, V
          */
         RecyclerView streamsListView = root.findViewById(R.id.streamListView);
         streamsListView.setLayoutManager(new LinearLayoutManager(getContext()));
-        arrayAdapter = new StreamListAdapter(getContext(), streamList, this.requireActivity());
-        streamsListView.setAdapter(arrayAdapter);
+        mArrayAdapter = new StreamListAdapter(getContext(), mStreamList, this.requireActivity());
+        streamsListView.setAdapter(mArrayAdapter);
 
         /*
           Add some elements to the list, purely for aesthetic purposes.
@@ -82,8 +84,8 @@ public class MainFragment extends Fragment implements StreamingRecordObserver, V
         /*
           Set the number of streams available to 0.
          */
-        numStreams = root.findViewById(R.id.streams_available);
-        numStreams.setText(getString(R.string.dispositivos_encontrados, 0));
+        mNumStreams = root.findViewById(R.id.streams_available);
+        mNumStreams.setText(getString(R.string.dispositivos_encontrados, 0));
 
         /*
           Add this class as an observer to the StreamingRecord static instance. This will allow
@@ -97,7 +99,10 @@ public class MainFragment extends Fragment implements StreamingRecordObserver, V
          */
         Button record = root.findViewById(R.id.recordButton);
         record.setOnClickListener(this);
-        myStatus = root.findViewById(R.id.my_status);
+        mStatus = root.findViewById(R.id.my_status);
+
+        mArrayListRefresh = root.findViewById(R.id.swiperefresh);
+        mArrayListRefresh.setOnRefreshListener(this);
 
 
         /*
@@ -107,9 +112,9 @@ public class MainFragment extends Fragment implements StreamingRecordObserver, V
             ViewModel class, which is an intermediary class used to manage the network.
          */
         mViewModel.isNetworkAvailable().observe(getViewLifecycleOwner(), observedBoolean -> {
-            isNetworkAvailable = observedBoolean;
-            myStatus.setText(getDeviceNetworkStatus());
-            if(isNetworkAvailable){
+            mIsNetworkAvailable = observedBoolean;
+            mStatus.setText(getDeviceNetworkStatus());
+            if(mIsNetworkAvailable){
                 mViewModel.initNetwork();
             }
         });
@@ -122,18 +127,18 @@ public class MainFragment extends Fragment implements StreamingRecordObserver, V
      * Add the default items to the list, purely for aesthetic purposes.
      */
     private void addDefaultItemList(){
-        streamList.clear();
-        streamList.add(null);
-        streamList.add(null);
-        streamList.add(null);
-        streamList.add(null);
+        mStreamList.clear();
+        mStreamList.add(null);
+        mStreamList.add(null);
+        mStreamList.add(null);
+        mStreamList.add(null);
     }
 
     /**
      * Remove the default items from the list, used when a new stream is added to the list.
      */
     private void removeDefaultItemList(){
-        streamList.removeIf(Objects::isNull);
+        mStreamList.removeIf(Objects::isNull);
     }
 
 
@@ -175,18 +180,18 @@ public class MainFragment extends Fragment implements StreamingRecordObserver, V
               removed from the list.
              */
             if (on_off) {
-                if (!streamList.contains(detail))
-                    streamList.add(detail);
+                if (!mStreamList.contains(detail))
+                    mStreamList.add(detail);
             } else {
-                streamList.remove(detail);
+                mStreamList.remove(detail);
             }
             /*
               The number of streams available is updated and the StreamListAdapter is notified of the
               changes.
              */
-            numStreams.setText(getString(R.string.dispositivos_encontrados, streamList.size()));
-            if(streamList.size() == 0) addDefaultItemList();
-            arrayAdapter.setStreamsData(streamList);
+            mNumStreams.setText(getString(R.string.dispositivos_encontrados, mStreamList.size()));
+            if(mStreamList.size() == 0) addDefaultItemList();
+            mArrayAdapter.setStreamsData(mStreamList);
         }
     }
 
@@ -196,10 +201,10 @@ public class MainFragment extends Fragment implements StreamingRecordObserver, V
      * @param isDownload Boolean value indicating if the stream is being downloaded or not.
      */
     public void changeStreamDownloadState(String uuid, boolean isDownload){
-        for(StreamDetail value: streamList){
+        for(StreamDetail value: mStreamList){
             if (value.getUuid().equals(uuid)) {
                 value.setDownload(isDownload);
-                arrayAdapter.setStreamsData(streamList);
+                mArrayAdapter.setStreamsData(mStreamList);
                 return;
             }
         }
@@ -212,9 +217,9 @@ public class MainFragment extends Fragment implements StreamingRecordObserver, V
     public String getDeviceNetworkStatus() {
         Pair<Boolean, String> status = mViewModel.getDeviceNetworkStatus(getContext());
         if(status.first){
-            myStatus.setTextColor(getResources().getColor(R.color.colorPrimaryDark, null));
+            mStatus.setTextColor(getResources().getColor(R.color.colorPrimaryDark, null));
         } else {
-            myStatus.setTextColor(getResources().getColor(R.color.colorRed, null));
+            mStatus.setTextColor(getResources().getColor(R.color.colorRed, null));
         }
         return status.second;
     }
@@ -292,7 +297,7 @@ public class MainFragment extends Fragment implements StreamingRecordObserver, V
     public void onClick(View v) {
         if (v.getId() == R.id.recordButton) {
             if(checkCameraHardware()){
-                if(!isNetworkAvailable){
+                if(!mIsNetworkAvailable){
                     Toast.makeText(MainFragment.this.getContext(), R.string.record_not_available, Toast.LENGTH_SHORT).show();
                 }
                 else{
@@ -301,4 +306,21 @@ public class MainFragment extends Fragment implements StreamingRecordObserver, V
             }
         }
     }
+
+        @Override
+        public void onRefresh() {
+            ArrayList<Streaming> streamList = new ArrayList<>(StreamingRecord.getInstance().getStreamings());
+            if (mIsNetworkAvailable) mViewModel.initNetwork();
+            for(Streaming streaming: streamList){
+                final String path = streaming.getUUID().toString();
+                requireActivity().runOnUiThread(() -> updateList(true,
+                        path,
+                        streaming.getName(),
+                        streaming.getReceiveSession().getDestinationAddress().toString(),
+                        streaming.getReceiveSession().getDestinationPort(),
+                        streaming.isDownloading()));
+            }
+            mArrayListRefresh.setRefreshing(false);
+        }
+
 }
