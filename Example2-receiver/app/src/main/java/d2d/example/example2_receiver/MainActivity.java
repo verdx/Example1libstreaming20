@@ -48,23 +48,32 @@ public class MainActivity extends AppCompatActivity implements StreamingRecordOb
         setContentView(R.layout.activity_main);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        streamList = new ArrayList<>();
-        mViewModel = new DefaultViewModel(this.getApplication());
         mStatusTextView = findViewById(R.id.statusTextView);
         mIncomingIpsEditText = findViewById(R.id.editTextIncomingIP);
-        setIncomingIps();
-
         mArrayListRefresh = findViewById(R.id.swiperefresh);
         mArrayListRefresh.setOnRefreshListener(this);
 
+
+        /*
+        Initialize the RecyclerView with an adapter and an array list
+         */
+        streamList = new ArrayList<>();
         RecyclerView streamsListView = this.findViewById(R.id.streamsList);
         streamsListView.setLayoutManager(new LinearLayoutManager(this));
         addDefaultItemList();
         arrayAdapter = new StreamListAdapter(this, streamList, this);
         streamsListView.setAdapter(arrayAdapter);
 
+        /*
+        Initialize the StreamingRecord singleton and add this activity as an observer
+         */
         StreamingRecord.getInstance().addObserver(this);
 
+        /*
+        Initialize the ViewModel, set the Incoming IPs(in this example from a EditText) and observe the network status
+         */
+        mViewModel = new DefaultViewModel(this.getApplication());
+        setIncomingIps();
         mViewModel.isNetworkAvailable().observe(this, (Observer<Boolean>) aBoolean -> {
             isNetworkAvailable = aBoolean;
             mStatusTextView.setText(getDeviceStatus());
@@ -74,6 +83,9 @@ public class MainActivity extends AppCompatActivity implements StreamingRecordOb
         });
     }
 
+    /**
+     * Manually check for the needed permissions in the EditText mIncomingIpsEditText
+     */
     private void setIncomingIps() {
         String[] ipArray = mIncomingIpsEditText.getText().toString().replaceAll("\\s","").split(",");
         ArrayList<String> ipList = new ArrayList<>();
@@ -89,7 +101,6 @@ public class MainActivity extends AppCompatActivity implements StreamingRecordOb
     @Override
     public void onDestroy() {
         super.onDestroy();
-        StreamingRecord.getInstance().removeObserver(this);
     }
 
     @Override
