@@ -20,7 +20,7 @@ To use this example, write the IPs you want to send the streams to in the box an
 
 Shows how to start receiving video streams from given IPs, using `StreamingRecord`. It also uses the UI classes in the library, such as `ViewStreamActivity` to visualize the streams, and `StreamListAdapter` and `StreamDetail` to create a RecyclerView where the incoming IPs are displayed.
 
-To use this example, write the IPs you want to be receiving streams from in the box and swipe down on the list to load them. Once they are loaded, any stream started by those devices will be received. Press on the list element to open an activity to watch the stream.
+To use this example, press on the list element to open an activity to watch the stream whenever a stream is received. For it to be received, this device's IP(shown in the main screen) must be inserted in the destination IPs on a sender(Example2-sender or Example3)
 
 ### Example 3
 
