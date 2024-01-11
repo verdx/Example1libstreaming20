@@ -36,7 +36,6 @@ public class MainActivity extends AppCompatActivity implements StreamingRecordOb
     private ArrayList<StreamDetail> streamList;
     private StreamListAdapter arrayAdapter;
     private BasicViewModel mViewModel;
-    private EditText mIncomingIpsEditText;
     private TextView mStatusTextView;
     private SwipeRefreshLayout mArrayListRefresh;
     private Boolean isNetworkAvailable;
@@ -49,7 +48,6 @@ public class MainActivity extends AppCompatActivity implements StreamingRecordOb
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         mStatusTextView = findViewById(R.id.statusTextView);
-        mIncomingIpsEditText = findViewById(R.id.editTextIncomingIP);
         mArrayListRefresh = findViewById(R.id.swiperefresh);
         mArrayListRefresh.setOnRefreshListener(this);
 
@@ -73,7 +71,6 @@ public class MainActivity extends AppCompatActivity implements StreamingRecordOb
         Initialize the ViewModel, set the Incoming IPs(in this example from a EditText) and observe the network status
          */
         mViewModel = new DefaultViewModel(this.getApplication());
-        setIncomingIps();
         mViewModel.isNetworkAvailable().observe(this, (Observer<Boolean>) aBoolean -> {
             isNetworkAvailable = aBoolean;
             mStatusTextView.setText(getDeviceStatus());
@@ -81,16 +78,6 @@ public class MainActivity extends AppCompatActivity implements StreamingRecordOb
                 mViewModel.initNetwork();
             }
         });
-    }
-
-    /**
-     * Manually check for the needed permissions in the EditText mIncomingIpsEditText
-     */
-    private void setIncomingIps() {
-        String[] ipArray = mIncomingIpsEditText.getText().toString().replaceAll("\\s","").split(",");
-        ArrayList<String> ipList = new ArrayList<>();
-        Collections.addAll(ipList, ipArray);
-        ((DefaultViewModel)mViewModel).setDestinationIpsArray(ipList);
     }
 
     @Override
@@ -139,8 +126,17 @@ public class MainActivity extends AppCompatActivity implements StreamingRecordOb
 
     @Override
     public void onRefresh() {
-        setIncomingIps();
+        ArrayList<Streaming> streamings = new ArrayList<>(StreamingRecord.getInstance().getStreamings());
         if (isNetworkAvailable) mViewModel.initNetwork();
+        for(Streaming streaming: streamings){
+            final String path = streaming.getUUID().toString();
+            this.runOnUiThread(() -> updateList(true,
+                    path,
+                    streaming.getName(),
+                    streaming.getReceiveSession().getDestinationAddress().toString(),
+                    streaming.getReceiveSession().getDestinationPort(),
+                    streaming.isDownloading()));
+        }
         mArrayListRefresh.setRefreshing(false);
     }
 
