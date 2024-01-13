@@ -1,34 +1,64 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:color="@android:color/background_light"
-    tools:context=".MainActivity"
-    android:padding="20dp"
-    android:orientation="vertical">
+    tools:context="d2d.example.example2_receiver.MainActivity">
 
     <TextView
-        android:layout_width="wrap_content"
+        android:id="@+id/my_status"
+        android:layout_width="346dp"
         android:layout_height="wrap_content"
-        android:id="@+id/statusTextView"
-        android:singleLine="true"
-        android:layout_centerHorizontal="true"
-        android:text="@string/network_is_available"/>
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="35dp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/streams_available"
+        android:layout_width="330dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/my_status"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="35dp"
+        android:layout_marginEnd="30dp"
+        android:text="AVAILABLE STREAMS (%1$d)"
+        android:textAlignment="textStart"
+        android:textAllCaps="false"
+        android:textStyle="bold" />
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swiperefresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/statusTextView"
-        android:layout_marginTop="20dp">
+        android:layout_marginTop="20dp"
+        android:layout_below="@+id/streams_available"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/streamsList"
+            android:id="@+id/streamListView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="435dp"
+            android:layout_above="@+id/recordButton"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginBottom="45dp" />
+
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
 
 </RelativeLayout>

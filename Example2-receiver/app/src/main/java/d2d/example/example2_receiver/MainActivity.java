@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements StreamingRecordOb
         /*
         Initialize the UI elements
          */
-        mStatusTextView = findViewById(R.id.statusTextView);
+        mStatusTextView = findViewById(R.id.my_status);
         mArrayListRefresh = findViewById(R.id.swiperefresh);
         mArrayListRefresh.setOnRefreshListener(this);
 
@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements StreamingRecordOb
         Initialize the RecyclerView with an adapter and an array list
          */
         mStreamList = new ArrayList<>();
-        RecyclerView streamsListView = this.findViewById(R.id.streamsList);
+        RecyclerView streamsListView = this.findViewById(R.id.streamListView);
         streamsListView.setLayoutManager(new LinearLayoutManager(this));
         addDefaultItemList();
         mArrayAdapter = new StreamListAdapter(this, mStreamList, this);
