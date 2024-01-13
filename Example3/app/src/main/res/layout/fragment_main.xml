@@ -59,7 +59,13 @@
 		android:id="@+id/swiperefresh"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
-		android:layout_marginTop="20dp">
+		android:layout_marginTop="20dp"
+		android:layout_below="@+id/streams_available"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintHorizontal_bias="0.0"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toTopOf="parent">
 
 
 	<androidx.recyclerview.widget.RecyclerView
@@ -67,18 +73,12 @@
 		android:layout_width="match_parent"
 		android:layout_height="435dp"
 		android:layout_above="@+id/recordButton"
-		android:layout_below="@+id/streams_available"
 		android:layout_alignParentStart="true"
 		android:layout_alignParentEnd="true"
 		android:layout_marginStart="0dp"
 		android:layout_marginTop="5dp"
 		android:layout_marginEnd="0dp"
-		android:layout_marginBottom="45dp"
-		app:layout_constraintBottom_toBottomOf="parent"
-		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintHorizontal_bias="0.0"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toTopOf="parent" />
+		android:layout_marginBottom="45dp" />
 
 
 	</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
