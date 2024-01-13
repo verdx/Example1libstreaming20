@@ -42,13 +42,19 @@ public class MainActivity extends AppCompatActivity implements StreamingRecordOb
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        /*
+        Set the UI, which includes a RecyclerView to display incoming streams
+         */
         setContentView(R.layout.activity_main);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
+        /*
+        Initialize the UI elements
+         */
         mStatusTextView = findViewById(R.id.statusTextView);
         mArrayListRefresh = findViewById(R.id.swiperefresh);
         mArrayListRefresh.setOnRefreshListener(this);
-
 
         /*
         Initialize the RecyclerView with an adapter and an array list
