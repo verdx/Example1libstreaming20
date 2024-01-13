@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
     private EditText mEditText;
     private TextView mStatusTextView;
     private AutoFitTextureView mTextureView;
-    private final String mStreamName = "defaultStream";
+    private final String mStreamName = "defaultName";
     private SessionBuilder mSessionBuilder;
     private Boolean isNetworkAvailable;
     private boolean isStreaming = false;
