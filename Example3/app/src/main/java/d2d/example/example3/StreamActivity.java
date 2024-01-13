@@ -41,7 +41,6 @@ public class StreamActivity extends AppCompatActivity implements TextureView.Sur
     private FloatingActionButton recordButton;
     private FloatingActionButton switchButton;
     public boolean mRecording = false;
-    private final VideoQuality mVideoQuality = VideoQuality.DEFAULT_VIDEO_QUALITY;
 
     private boolean isDownload;
 
@@ -64,7 +63,7 @@ public class StreamActivity extends AppCompatActivity implements TextureView.Sur
                 .setContext(getApplicationContext())
                 .setAudioEncoder(SessionBuilder.AUDIO_AAC)
                 .setVideoEncoder(SessionBuilder.VIDEO_NONE)
-                .setVideoQuality(mVideoQuality);
+                .setVideoQuality(VideoQuality.DEFAULT_VIDEO_QUALITY);
 
         /* Initializes the buttons and sets listeners on them */
         recordButton = findViewById(R.id.button_capture);
@@ -86,7 +85,7 @@ public class StreamActivity extends AppCompatActivity implements TextureView.Sur
      */
     public void startStreaming() {
         final UUID localStreamUUID = UUID.randomUUID();
-        final String mNameStreaming = "defaultStream";
+        final String mNameStreaming = "defaultName";
         StreamingRecord.getInstance().addLocalStreaming(localStreamUUID, mNameStreaming, mSessionBuilder);
 
         recordButton.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_stop));
