@@ -98,9 +98,8 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
                 .setPreviewOrientation(90)
                 .setContext(getApplicationContext())
                 .setAudioEncoder(SessionBuilder.AUDIO_AAC)
-                .setAudioQuality(new AudioQuality(16000, 32000))
-                .setVideoEncoder(SessionBuilder.VIDEO_H264)
-                .setVideoQuality(new VideoQuality(320, 240, 20, 500000));
+                .setVideoEncoder(SessionBuilder.VIDEO_NONE)
+                .setVideoQuality(VideoQuality.DEFAULT_VIDEO_QUALITY);
 
         /*
         Initialize the CameraController and ViewModel. This one will create the Network.
