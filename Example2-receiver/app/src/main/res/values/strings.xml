@@ -4,5 +4,6 @@
     <string name="app_name">example2-receiver</string>
     <string name="network_is_available">Network is available</string>
     <string name="enter_incoming_streams_ip">Enter incoming streams IP</string>
+    <string name="streams_available">AVAILABLE STREAMS (%1$d)</string>
 
 </resources>

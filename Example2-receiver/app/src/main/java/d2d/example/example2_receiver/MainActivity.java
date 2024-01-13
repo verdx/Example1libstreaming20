@@ -1,5 +1,6 @@
 package d2d.example.example2_receiver;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Pair;
 import android.view.WindowManager;
@@ -35,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements StreamingRecordOb
     private StreamListAdapter mArrayAdapter;
     private BasicViewModel mViewModel;
     private TextView mStatusTextView;
+    private TextView mNumStreams;
     private SwipeRefreshLayout mArrayListRefresh;
     private Boolean mIsNetworkAvailable;
 
@@ -82,6 +84,12 @@ public class MainActivity extends AppCompatActivity implements StreamingRecordOb
                 mViewModel.initNetwork();
             }
         });
+
+        /*
+          Set the number of streams available to 0.
+         */
+        mNumStreams = this.findViewById(R.id.streams_available);
+        mNumStreams.setText(getString(R.string.streams_available, 0));
     }
 
     @Override
@@ -178,6 +186,8 @@ public class MainActivity extends AppCompatActivity implements StreamingRecordOb
             } else {
                 mStreamList.remove(detail);
             }
+            mNumStreams = this.findViewById(R.id.streams_available);
+            mNumStreams.setText(getString(R.string.streams_available, mStreamList.size()));
             if(mStreamList.size() == 0) addDefaultItemList();
             mArrayAdapter.setStreamsData(mStreamList);
         }
