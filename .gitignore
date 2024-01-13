@@ -2,6 +2,7 @@
 .gradle
 /local.properties
 **/.idea/
+**/.idea/deploymentTargetDropDown.xml
 .DS_Store
 /build
 /captures
