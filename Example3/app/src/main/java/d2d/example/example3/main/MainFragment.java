@@ -84,7 +84,7 @@ public class MainFragment extends Fragment implements StreamingRecordObserver, V
         /*
           Set the number of streams available to 0.
          */
-        mNumStreams = root.findViewById(R.id.streams_available);
+        mNumStreams = root.findViewById(R.id.streamsAvailableTextView);
         mNumStreams.setText(getString(R.string.dispositivos_encontrados, 0));
 
         /*
@@ -99,9 +99,9 @@ public class MainFragment extends Fragment implements StreamingRecordObserver, V
          */
         Button record = root.findViewById(R.id.recordButton);
         record.setOnClickListener(this);
-        mStatus = root.findViewById(R.id.my_status);
+        mStatus = root.findViewById(R.id.statusTextView);
 
-        mArrayListRefresh = root.findViewById(R.id.swiperefresh);
+        mArrayListRefresh = root.findViewById(R.id.swipeRefreshLayout);
         mArrayListRefresh.setOnRefreshListener(this);
 
 

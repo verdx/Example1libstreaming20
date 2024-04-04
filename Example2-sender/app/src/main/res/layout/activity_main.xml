@@ -15,22 +15,24 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true" >
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true" >
 
         <Button
             android:id="@+id/record"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/start" />
+            android:text="@string/start"
+            style="?android:attr/buttonBarButtonStyle" />
 
         <Button
             android:id="@+id/swap"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Swap" />
+            android:text="@string/swap_camera"
+            style="?android:attr/buttonBarButtonStyle" />
     </LinearLayout>
 
     <EditText
@@ -43,7 +45,7 @@
         android:ems="10"
         android:gravity="center"
         android:singleLine="true"
-        android:hint="Enter IP address to send the stream to"/>
+        android:hint="@string/enter_ip_address_to_send_the_stream_to"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -51,7 +53,7 @@
         android:id="@+id/statusTextView"
         android:singleLine="true"
         android:layout_centerHorizontal="true"
-        android:text="Network not available"
+        android:text="@string/network_not_available"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:layout_above="@id/layout1"

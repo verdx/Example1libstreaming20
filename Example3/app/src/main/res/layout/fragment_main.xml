@@ -8,59 +8,49 @@
 	tools:context="d2d.example.example3.main.MainFragment">
 
 	<TextView
-		android:id="@+id/my_status"
-		android:layout_width="346dp"
+		android:id="@+id/statusTextView"
+		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_alignParentStart="true"
 		android:layout_alignParentTop="true"
 		android:layout_alignParentEnd="true"
-		android:layout_marginStart="30dp"
-		android:layout_marginTop="20dp"
-		android:layout_marginEnd="35dp"
-		android:textStyle="bold" />
+		android:layout_centerHorizontal="true"
+		android:layout_centerInParent="true"
+		android:layout_centerVertical="true"
+		android:textStyle="bold"
+		android:textAlignment="center"
+		android:padding="10dp"/>
 
 	<TextView
-		android:id="@+id/streams_available"
-		android:layout_width="330dp"
+		android:id="@+id/streamsAvailableTextView"
+		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_below="@id/my_status"
+		android:layout_below="@id/statusTextView"
 		android:layout_alignParentStart="true"
 		android:layout_alignParentEnd="true"
-		android:layout_marginStart="30dp"
-		android:layout_marginTop="35dp"
-		android:layout_marginEnd="30dp"
 		android:text="@string/dispositivos_encontrados"
 		android:textAlignment="textStart"
-		android:textAllCaps="false"
-		android:textStyle="bold" />
+		android:textStyle="bold"
+		android:padding="10dp"/>
 
 	<Button
 		android:id="@+id/recordButton"
 		android:layout_width="wrap_content"
-		android:layout_height="73dp"
+		android:layout_height="wrap_content"
 		android:layout_alignParentStart="true"
 		android:layout_alignParentEnd="true"
 		android:layout_alignParentBottom="true"
-		android:layout_marginStart="34dp"
-		android:layout_marginEnd="46dp"
-		android:layout_marginBottom="35dp"
-		android:background="@drawable/button_design"
-		android:drawableStart="@android:drawable/ic_media_play"
 		android:fontFamily="sans-serif"
-		android:paddingLeft="40dp"
-		android:paddingRight="40dp"
-		android:text="@string/boton_record"
+		android:text="@string/recordButton"
 		android:textAlignment="center"
-		android:textColor="#FFFFFF"
-		android:textSize="45sp"
 		android:textStyle="bold" />
 
 	<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-		android:id="@+id/swiperefresh"
+		android:id="@+id/swipeRefreshLayout"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		android:layout_marginTop="20dp"
-		android:layout_below="@+id/streams_available"
+		android:layout_below="@+id/streamsAvailableTextView"
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintHorizontal_bias="0.0"

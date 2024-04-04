@@ -4,5 +4,8 @@
     <string name="app_name">example2-sender</string>
     <string name="start">Start</string>
     <string name="stop">Stop</string>
+    <string name="swap_camera">Swap</string>
+    <string name="enter_ip_address_to_send_the_stream_to">Enter IP address to send the stream to</string>
+    <string name="network_not_available">Network not available</string>
 
 </resources>

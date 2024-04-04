@@ -7,7 +7,7 @@
 	<string name="string_transfer_file">\Transfer File</string>
 	<string name="string_camera">Camara</string>
 	<string name="mi_dispositivo">MI DISPOSITIVO</string>
-	<string name="boton_record">GRABAR</string>
+	<string name="recordButton">GRABAR</string>
 	<string name="record_video">reproducir</string>
 	<string name="change_camera">cambiar cámara</string>
 	<string name="dispositivos_encontrados">STREAMS DISPONIBLES (%1$d)</string>
