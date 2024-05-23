@@ -8,3 +8,9 @@
 [submodule "Example1/libstreaming2.0"]
 	path = Example1/libstreaming2.0
 	url = https://github.com/verdx/libstreaming2.0.git
+[submodule "Example3/libstreaming2.0"]
+	path = Example3/libstreaming2.0
+	url = https://github.com/verdx/libstreaming2.0.git
+[submodule "Example2-sender/libstreaming2.0"]
+	path = Example2-sender/libstreaming2.0
+	url = https://github.com/verdx/libstreaming2.0.git
